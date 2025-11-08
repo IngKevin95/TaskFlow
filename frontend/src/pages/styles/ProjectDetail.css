@@ -1,0 +1,244 @@
+/**
+ * ProjectDetail Styles
+ */
+
+.project-detail-page {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.detail-header {
+  margin-bottom: 2rem;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.btn-back:hover {
+  color: #1d4ed8;
+}
+
+.detail-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+}
+
+.detail-description {
+  color: #666;
+  margin: 0;
+}
+
+.detail-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 2rem;
+}
+
+.tab {
+  padding: 1rem 1.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #666;
+  border-bottom: 3px solid transparent;
+  position: relative;
+  bottom: -2px;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  color: #2563eb;
+}
+
+.tab.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+.tasks-section {
+  margin-bottom: 2rem;
+}
+
+.tasks-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.task-column {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 500px;
+}
+
+.task-column.status-pending {
+  border-left: 4px solid #6b7280;
+}
+
+.task-column.status-in_progress {
+  border-left: 4px solid #eab308;
+}
+
+.task-column.status-review {
+  border-left: 4px solid #0284c7;
+}
+
+.task-column.status-completed {
+  border-left: 4px solid #16a34a;
+}
+
+.column-title {
+  margin: 0 0 1rem 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1a1a1a;
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.task-item {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 1rem;
+  cursor: move;
+  transition: all 0.2s ease;
+}
+
+.task-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-item h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.task-item p {
+  margin: 0 0 0.75rem 0;
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.priority {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.priority-low {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.priority-medium {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.priority-high {
+  background-color: #fed7aa;
+  color: #92400e;
+}
+
+.priority-critical {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.btn-delete:hover {
+  color: #dc2626;
+}
+
+.members-section {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.members-section h3 {
+  margin: 0 0 1.5rem 0;
+}
+
+.members-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.member-info h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.member-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.error-container {
+  text-align: center;
+  padding: 3rem;
+}
+
+.error-container p {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .tasks-board {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-header h1 {
+    font-size: 1.5rem;
+  }
+}
