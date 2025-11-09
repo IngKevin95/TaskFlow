@@ -6,6 +6,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
+import MainLayout from '../layouts/MainLayout';
 
 // Páginas
 import HomePage from '../pages/HomePage';
@@ -42,7 +43,9 @@ const AppRouter: React.FC = () => {
           path="/"
           element={
             <ProtectedRoute>
-              <HomePage />
+              <MainLayout>
+                <HomePage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -51,7 +54,9 @@ const AppRouter: React.FC = () => {
           path="/projects"
           element={
             <ProtectedRoute>
-              <ProjectsPage />
+              <MainLayout>
+                <ProjectsPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -60,7 +65,9 @@ const AppRouter: React.FC = () => {
           path="/projects/:id"
           element={
             <ProtectedRoute>
-              <ProjectDetailPage />
+              <MainLayout>
+                <ProjectDetailPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -69,7 +76,9 @@ const AppRouter: React.FC = () => {
           path="/tasks"
           element={
             <ProtectedRoute>
-              <TasksPage />
+              <MainLayout>
+                <TasksPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />

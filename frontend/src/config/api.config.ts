@@ -23,11 +23,11 @@ export const ENDPOINTS = {
     TASKS: (id: number) => `${API_PREFIX}/projects/${id}/tasks`,
   },
   TASKS: {
-    CREATE: (projectId: number) => `${API_PREFIX}/projects/${projectId}/tasks`,
+    CREATE: `${API_PREFIX}/tasks`,
     DETAIL: (id: number) => `${API_PREFIX}/tasks/${id}`,
     UPDATE: (id: number) => `${API_PREFIX}/tasks/${id}`,
     DELETE: (id: number) => `${API_PREFIX}/tasks/${id}`,
-    MY_TASKS: `${API_PREFIX}/tasks/me`,
+    MY_TASKS: `${API_PREFIX}/tasks/my-tasks`,
   },
 } as const;
 

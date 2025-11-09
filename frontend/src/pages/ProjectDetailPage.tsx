@@ -5,8 +5,9 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useProject } from '@/hooks/useProject';
+import { useProjects } from '@/hooks/useProject';
 import { useTasks } from '@/hooks/useTask';
+import CreateTaskModal from '../components/tasks/CreateTaskModal';
 import './styles/ProjectDetail.css';
 
 const ProjectDetailPage: FC = () => {
@@ -14,7 +15,7 @@ const ProjectDetailPage: FC = () => {
   const navigate = useNavigate();
   const projectId = parseInt(id || '0');
 
-  const { projects, isLoading: projectLoading, error: projectError, fetchProjects } = useProject();
+  const { projects, isLoading: projectLoading, error: projectError, fetchProjects } = useProjects();
   const { 
     tasks, 
     isLoading: tasksLoading, 
@@ -26,10 +27,14 @@ const ProjectDetailPage: FC = () => {
   } = useTasks();
 
   const [activeTab, setActiveTab] = useState<'tasks' | 'members'>('tasks');
-  const project = projects.find(p => p.id === projectId);
+  const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
+  const project = projects.find((p: any) => p.id === projectId);
 
   useEffect(() => {
-    fetchProjects();
+    const loadProjects = async () => {
+      await fetchProjects(0, 50);
+    };
+    loadProjects();
   }, []);
 
   useEffect(() => {
@@ -92,6 +97,15 @@ const ProjectDetailPage: FC = () => {
 
       {activeTab === 'tasks' && (
         <div className="tasks-section">
+          <div className="tasks-header">
+            <h2>Tareas del Proyecto</h2>
+            <button 
+              onClick={() => setShowCreateTaskModal(true)} 
+              className="btn btn-primary btn-create-task"
+            >
+              + Nueva Tarea
+            </button>
+          </div>
           {tasksLoading ? (
             <div className="loading">Cargando tareas...</div>
           ) : (
@@ -144,6 +158,21 @@ const ProjectDetailPage: FC = () => {
           </div>
         </div>
       )}
+
+      <CreateTaskModal
+        isOpen={showCreateTaskModal}
+        onClose={() => setShowCreateTaskModal(false)}
+        onSubmit={async (data) => {
+          await createTask(projectId, {
+            title: data.title,
+            description: data.description,
+            priority: data.priority,
+          });
+          await fetchProjectTasks(projectId);
+        }}
+        projects={projects}
+        defaultProjectId={projectId}
+      />
     </div>
   );
 };

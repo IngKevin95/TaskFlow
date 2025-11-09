@@ -47,11 +47,20 @@ export const useProjects = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await projectsAPI.getAll(skip, limit);
-      setProjects(data);
+      const data: any = await projectsAPI.getAll(skip, limit);
+      console.log("📊 Datos de proyectos recibidos:", data);
+      console.log("📊 Tipo de datos:", typeof data);
+      console.log("📊 Es array?:", Array.isArray(data));
+      
+      // Si es un objeto con propiedad 'data', extraer eso
+      const projectsArray = Array.isArray(data) ? data : (data?.data || []);
+      console.log("📊 Array final a guardar:", projectsArray);
+      
+      setProjects(projectsArray);
     } catch (err: any) {
       const errorMessage = err.response?.data?.detail || "Error al obtener proyectos";
       setError(errorMessage);
+      console.error("❌ Error al obtener proyectos:", err);
     } finally {
       setIsLoading(false);
     }

@@ -18,7 +18,10 @@ class TasksAPI {
   }
 
   async create(projectId: number, data: TaskCreateRequest): Promise<Task> {
-    const response = await axiosInstance.post(ENDPOINTS.TASKS.CREATE(projectId), data);
+    const response = await axiosInstance.post(ENDPOINTS.TASKS.CREATE, {
+      ...data,
+      project_id: projectId,
+    });
     return response.data;
   }
 

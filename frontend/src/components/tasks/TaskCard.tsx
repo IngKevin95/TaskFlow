@@ -23,17 +23,7 @@ const getPriorityColor = (priority: string): string => {
   return colors[priority] || '#999';
 };
 
-const getStatusLabel = (status: string): string => {
-  const labels: Record<string, string> = {
-    pending: 'Pendiente',
-    in_progress: 'En Progreso',
-    review: 'En Revisión',
-    completed: 'Completado',
-  };
-  return labels[status] || status;
-};
-
-const TaskCard: FC<TaskCardProps> = ({ task, onStatusChange, onDelete }) => {
+const TaskCard: FC<TaskCardProps> = ({ task, onStatusChange, onDelete }: TaskCardProps) => {
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (onStatusChange) {
       onStatusChange(e.target.value);
@@ -46,10 +36,10 @@ const TaskCard: FC<TaskCardProps> = ({ task, onStatusChange, onDelete }) => {
         <div className="task-meta">
           <span
             className="priority-dot"
-            style={{ backgroundColor: getPriorityColor(task.priority) }}
-            title={task.priority}
+            style={{ backgroundColor: getPriorityColor(task.priority as string) }}
+            title={task.priority as string}
           ></span>
-          <span className="task-priority">{task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
+          <span className="task-priority">{String(task.priority).charAt(0).toUpperCase() + String(task.priority).slice(1)}</span>
         </div>
         <button
           className="task-delete-btn"
@@ -65,7 +55,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, onStatusChange, onDelete }) => {
 
       <div className="task-footer">
         <select
-          value={task.status}
+          value={task.status as string}
           onChange={handleStatusChange}
           className={`status-select status-${task.status}`}
         >
@@ -75,21 +65,15 @@ const TaskCard: FC<TaskCardProps> = ({ task, onStatusChange, onDelete }) => {
           <option value="completed">Completado</option>
         </select>
 
-        {task.dueDate && (
+        {task.due_date && (
           <span className="task-due-date">
-            {new Date(task.dueDate).toLocaleDateString('es-ES', {
+            {new Date(task.due_date).toLocaleDateString('es-ES', {
               month: 'short',
               day: 'numeric',
             })}
           </span>
         )}
       </div>
-
-      {task.assignedToName && (
-        <div className="task-assignee">
-          Asignado a: <strong>{task.assignedToName}</strong>
-        </div>
-      )}
     </div>
   );
 };

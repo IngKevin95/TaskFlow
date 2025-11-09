@@ -34,12 +34,12 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
   children,
   redirectTo = '/login'
 }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, isInitialized } = useAuth();
 
-  console.log('ProtectedRoute - Estado:', { isAuthenticated, isLoading });
+  console.log('ProtectedRoute - Estado:', { isAuthenticated, isLoading, isInitialized });
 
-  // Mientras se carga la información de autenticación
-  if (isLoading) {
+  // Mientras se inicializa la autenticación desde localStorage
+  if (!isInitialized || isLoading) {
     return (
       <div className="loading-container">
         <div className="spinner"></div>

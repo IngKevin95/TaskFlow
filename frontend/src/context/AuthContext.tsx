@@ -10,6 +10,7 @@ interface AuthContextType {
   isLoading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  isInitialized: boolean;
   register: (data: RegisterRequest) => Promise<void>;
   login: (credentials: AuthRequest) => Promise<void>;
   logout: () => void;
@@ -26,6 +27,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isLoading: auth.isLoading,
     error: auth.error,
     isAuthenticated: auth.isAuthenticated,
+    isInitialized: auth.isInitialized,
     register: auth.register,
     login: auth.login,
     logout: auth.logout,

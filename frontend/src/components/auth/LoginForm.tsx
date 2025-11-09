@@ -77,9 +77,9 @@ const LoginForm: FC<LoginFormProps> = ({ onSuccess }) => {
       setFormData({ username: '', password: '' });
       
       // Navegar inmediatamente después del login exitoso
-      console.log('Navegando a /projects');
-      navigate('/projects', { replace: true });
-      
+      console.log('Navegando a /home');
+      navigate('/home', { replace: true });
+
     } catch (err) {
       // El error se maneja en el hook useAuth y se mostrará en la UI
       console.error('Error al iniciar sesión:', err);

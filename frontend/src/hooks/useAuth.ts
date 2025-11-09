@@ -11,17 +11,29 @@ export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Cargar token y usuario del localStorage al montar
   useEffect(() => {
-    const storedToken = localStorage.getItem(STORAGE_KEYS.TOKEN);
-    const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
+    const initializeAuth = () => {
+      const storedToken = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
-    }
+      if (storedToken && storedUser) {
+        try {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+          setIsAuthenticated(true);
+        } catch (err) {
+          console.error('Error al parsear usuario del localStorage:', err);
+          localStorage.removeItem(STORAGE_KEYS.TOKEN);
+          localStorage.removeItem(STORAGE_KEYS.USER);
+        }
+      }
+      setIsInitialized(true);
+    };
+
+    initializeAuth();
   }, []);
 
   const register = async (data: RegisterRequest) => {
@@ -85,6 +97,7 @@ export const useAuth = () => {
     isLoading,
     error,
     isAuthenticated,
+    isInitialized,
     register,
     login,
     logout,

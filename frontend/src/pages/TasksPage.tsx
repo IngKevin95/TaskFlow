@@ -5,20 +5,30 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import { useTasks } from '@/hooks/useTask';
+import { useProjects } from '@/hooks/useProject';
+import { useAuth } from '@/context/AuthContext';
 import TaskCard from '../components/tasks/TaskCard';
+import CreateTaskModal from '../components/tasks/CreateTaskModal';
 import './styles/TasksPage.css';
 
 type FilterStatus = 'all' | 'pending' | 'in_progress' | 'review' | 'completed';
 type FilterPriority = 'all' | 'low' | 'medium' | 'high' | 'critical';
 
 const TasksPage: FC = () => {
-  const { myTasks, isLoading, error, fetchMyTasks, updateStatus, deleteTask } = useTasks();
+  const { user } = useAuth();
+  const { myTasks, isLoading, error, fetchMyTasks, updateStatus, deleteTask, createTask } = useTasks();
+  const { projects, fetchProjects } = useProjects();
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('all');
   const [priorityFilter, setPriorityFilter] = useState<FilterPriority>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    fetchMyTasks();
+    const loadData = async () => {
+      await fetchMyTasks();
+      await fetchProjects(0, 50);
+    };
+    loadData();
   }, []);
 
   const filteredTasks = myTasks.filter(task => {
@@ -39,12 +49,13 @@ const TasksPage: FC = () => {
   };
 
   const handleStatusChange = async (taskId: number, newStatus: string) => {
-    await updateStatus(taskId, newStatus);
+    await updateStatus(taskId, newStatus as any);
   };
 
   const handleDeleteTask = async (taskId: number) => {
     if (confirm('¿Eliminar esta tarea?')) {
       await deleteTask(taskId);
+      await fetchMyTasks();
     }
   };
 
@@ -52,6 +63,9 @@ const TasksPage: FC = () => {
     <div className="tasks-page">
       <div className="tasks-header">
         <h1>Mis Tareas</h1>
+        <button onClick={() => setShowModal(true)} className="btn btn-primary btn-create-task">
+          + Nueva Tarea
+        </button>
       </div>
 
       <div className="tasks-controls">
@@ -146,6 +160,22 @@ const TasksPage: FC = () => {
           <span className="stat-value">{tasksByStatus.in_progress.length}</span>
         </div>
       </div>
+
+      <CreateTaskModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={async (data) => {
+          await createTask(data.projectId, {
+            title: data.title,
+            description: data.description,
+            priority: data.priority,
+            assigned_to_id: user?.id,
+          });
+          await fetchMyTasks();
+          setShowModal(false);
+        }}
+        projects={projects}
+      />
     </div>
   );
 };
