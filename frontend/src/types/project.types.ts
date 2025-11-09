@@ -5,8 +5,8 @@ import { Task } from "./task.types";
 
 export interface Project {
   id: number;
-  name: string;
-  description?: string;
+  nombre: string;
+  descripcion?: string;
   owner_id: number;
   created_at: string;
   updated_at: string;
@@ -19,13 +19,13 @@ export interface ProjectWithDetails extends Project {
 }
 
 export interface ProjectCreateRequest {
-  name: string;
-  description?: string;
+  nombre: string;
+  descripcion?: string;
 }
 
 export interface ProjectUpdateRequest {
-  name?: string;
-  description?: string;
+  nombre?: string;
+  descripcion?: string;
 }
 
 export interface AddMemberRequest {

@@ -4,7 +4,7 @@
  */
 
 import React, { FC, useEffect, useState } from 'react';
-import { Task } from '../../types/task.types';
+import { Task } from '../../types';
 import TaskCard from './TaskCard';
 import '../styles/TaskBoard.css';
 

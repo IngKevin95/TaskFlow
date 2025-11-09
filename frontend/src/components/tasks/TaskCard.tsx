@@ -4,7 +4,7 @@
  */
 
 import React, { FC } from 'react';
-import { Task } from '../../types/task.types';
+import { Task } from '../../types';
 import '../styles/TaskCard.css';
 
 interface TaskCardProps {

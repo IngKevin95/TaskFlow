@@ -5,7 +5,7 @@
 
 import React, { FC, ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -36,6 +36,8 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
 }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
+  console.log('ProtectedRoute - Estado:', { isAuthenticated, isLoading });
+
   // Mientras se carga la información de autenticación
   if (isLoading) {
     return (
@@ -48,10 +50,12 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
 
   // Si no está autenticado, redirigir
   if (!isAuthenticated) {
+    console.log('No autenticado, redirigiendo a:', redirectTo);
     return <Navigate to={redirectTo} replace />;
   }
 
   // Si está autenticado, mostrar contenido
+  console.log('Autenticado, mostrando contenido protegido');
   return <>{children}</>;
 };
 

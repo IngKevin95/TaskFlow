@@ -7,7 +7,7 @@ import React, { FC, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import LoginForm from '../components/auth/LoginForm';
 import RegisterForm from '../components/auth/RegisterForm';
-import '../styles/AuthPage.css';
+import './styles/AuthPage.css';
 
 type AuthMode = 'login' | 'register';
 

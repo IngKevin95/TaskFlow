@@ -1,7 +1,7 @@
 // Context de Autenticación
 
 import React, { createContext, useContext, ReactNode } from "react";
-import { useAuth as useAuthHook } from "../hooks/useAuth";
+import { useAuth as useAuthHook } from "@/hooks/useAuth";
 import { User, AuthRequest, RegisterRequest } from "../types";
 
 interface AuthContextType {

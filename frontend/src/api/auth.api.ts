@@ -11,7 +11,16 @@ class AuthAPI {
   }
 
   async login(credentials: AuthRequest): Promise<AuthResponse> {
-    const response = await axiosInstance.post(ENDPOINTS.AUTH.LOGIN, credentials);
+    // El backend espera application/x-www-form-urlencoded
+    const formData = new URLSearchParams();
+    formData.append('username', credentials.username);
+    formData.append('password', credentials.password);
+    
+    const response = await axiosInstance.post(ENDPOINTS.AUTH.LOGIN, formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
     return response.data;
   }
 

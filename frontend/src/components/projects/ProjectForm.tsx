@@ -7,36 +7,36 @@ import React, { FC, useState } from 'react';
 import '../styles/ProjectForm.css';
 
 interface ProjectFormProps {
-  onSubmit: (name: string, description: string) => Promise<void>;
+  onSubmit: (nombre: string, descripcion: string) => Promise<void>;
   onCancel: () => void;
-  initialName?: string;
-  initialDescription?: string;
+  initialNombre?: string;
+  initialDescripcion?: string;
 }
 
 const ProjectForm: FC<ProjectFormProps> = ({
   onSubmit,
   onCancel,
-  initialName = '',
-  initialDescription = '',
+  initialNombre = '',
+  initialDescripcion = '',
 }) => {
-  const [name, setName] = useState(initialName);
-  const [description, setDescription] = useState(initialDescription);
+  const [nombre, setNombre] = useState(initialNombre);
+  const [descripcion, setDescripcion] = useState(initialDescripcion);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!name.trim()) {
-      newErrors.name = 'El nombre es requerido';
-    } else if (name.length < 3) {
-      newErrors.name = 'El nombre debe tener al menos 3 caracteres';
-    } else if (name.length > 100) {
-      newErrors.name = 'El nombre no puede exceder 100 caracteres';
+    if (!nombre.trim()) {
+      newErrors.nombre = 'El nombre es requerido';
+    } else if (nombre.length < 3) {
+      newErrors.nombre = 'El nombre debe tener al menos 3 caracteres';
+    } else if (nombre.length > 100) {
+      newErrors.nombre = 'El nombre no puede exceder 100 caracteres';
     }
 
-    if (description.length > 500) {
-      newErrors.description = 'La descripción no puede exceder 500 caracteres';
+    if (descripcion.length > 500) {
+      newErrors.descripcion = 'La descripción no puede exceder 500 caracteres';
     }
 
     setErrors(newErrors);
@@ -52,9 +52,9 @@ const ProjectForm: FC<ProjectFormProps> = ({
 
     try {
       setIsSubmitting(true);
-      await onSubmit(name, description);
-      setName('');
-      setDescription('');
+      await onSubmit(nombre, descripcion);
+      setNombre('');
+      setDescripcion('');
     } catch (err) {
       console.error('Error:', err);
     } finally {
@@ -66,41 +66,41 @@ const ProjectForm: FC<ProjectFormProps> = ({
     <div className="project-form-container">
       <form onSubmit={handleSubmit} className="project-form">
         <div className="form-group">
-          <label htmlFor="name">Nombre del Proyecto *</label>
+          <label htmlFor="nombre">Nombre del Proyecto *</label>
           <input
-            id="name"
+            id="nombre"
             type="text"
-            value={name}
+            value={nombre}
             onChange={(e) => {
-              setName(e.target.value);
-              if (errors.name) setErrors({ ...errors, name: '' });
+              setNombre(e.target.value);
+              if (errors.nombre) setErrors({ ...errors, nombre: '' });
             }}
             placeholder="Mi Proyecto"
-            className={`form-input ${errors.name ? 'input-error' : ''}`}
+            className={`form-input ${errors.nombre ? 'input-error' : ''}`}
             disabled={isSubmitting}
           />
-          {errors.name && <span className="form-error-text">{errors.name}</span>}
+          {errors.nombre && <span className="form-error-text">{errors.nombre}</span>}
         </div>
 
         <div className="form-group">
-          <label htmlFor="description">Descripción</label>
+          <label htmlFor="descripcion">Descripción</label>
           <textarea
-            id="description"
-            value={description}
+            id="descripcion"
+            value={descripcion}
             onChange={(e) => {
-              setDescription(e.target.value);
-              if (errors.description) setErrors({ ...errors, description: '' });
+              setDescripcion(e.target.value);
+              if (errors.descripcion) setErrors({ ...errors, descripcion: '' });
             }}
             placeholder="Descripción del proyecto..."
-            className={`form-textarea ${errors.description ? 'input-error' : ''}`}
+            className={`form-textarea ${errors.descripcion ? 'input-error' : ''}`}
             rows={4}
             disabled={isSubmitting}
           />
           <div className="char-count">
-            {description.length}/500 caracteres
+            {descripcion.length}/500 caracteres
           </div>
-          {errors.description && (
-            <span className="form-error-text">{errors.description}</span>
+          {errors.descripcion && (
+            <span className="form-error-text">{errors.descripcion}</span>
           )}
         </div>
 

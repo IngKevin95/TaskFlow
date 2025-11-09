@@ -4,7 +4,7 @@
  */
 
 import React, { FC } from 'react';
-import { Project } from '../../types/project.types';
+import { Project } from '../../types';
 import '../styles/ProjectCard.css';
 
 interface ProjectCardProps {
@@ -17,13 +17,13 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, onView, onDelete }) => {
   return (
     <div className="project-card">
       <div className="project-card-header">
-        <h3 className="project-name">{project.name}</h3>
+        <h3 className="project-name">{project.nombre}</h3>
         <button className="btn-menu" onClick={(e) => e.stopPropagation()}>
           ⋯
         </button>
       </div>
 
-      <p className="project-description">{project.description || 'Sin descripción'}</p>
+      <p className="project-description">{project.descripcion || 'Sin descripción'}</p>
 
       <div className="project-card-footer">
         <div className="project-meta">

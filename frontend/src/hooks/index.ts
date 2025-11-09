@@ -1,5 +1,5 @@
 // Exportar todos los hooks
 
-export * from "./useAuth";
-export * from "./useProject";
-export * from "./useTask";
+export { useAuth } from "./useAuth.ts";
+export { useProject } from "./useProject.ts";
+export { useTasks } from "./useTask.ts";

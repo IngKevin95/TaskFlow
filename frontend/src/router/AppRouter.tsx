@@ -8,12 +8,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 
 // Páginas
+import HomePage from '../pages/HomePage';
 import AuthPage from '../pages/AuthPage';
 import ProjectsPage from '../pages/ProjectsPage';
 import ProjectDetailPage from '../pages/ProjectDetailPage';
 import TasksPage from '../pages/TasksPage';
-// Páginas futuras
-// import SettingsPage from '../pages/SettingsPage';
 
 /**
  * App Router Component
@@ -39,6 +38,15 @@ const AppRouter: React.FC = () => {
         <Route path="/register" element={<AuthPage />} />
 
         {/* Rutas protegidas */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/projects"
           element={
@@ -66,11 +74,8 @@ const AppRouter: React.FC = () => {
           }
         />
 
-        {/* Ruta raíz - Redirige a login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-
         {/* Ruta 404 - No encontrada */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

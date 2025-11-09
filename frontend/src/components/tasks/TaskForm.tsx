@@ -4,7 +4,7 @@
  */
 
 import React, { FC, useState, useEffect } from 'react';
-import { Task } from '../../types/task.types';
+import { Task } from '../../types';
 import '../styles/TaskForm.css';
 
 interface TaskFormProps {

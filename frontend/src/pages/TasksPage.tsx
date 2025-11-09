@@ -4,15 +4,15 @@
  */
 
 import React, { FC, useEffect, useState } from 'react';
-import { useTask } from '../../hooks/useTask';
-import TaskCard from '../tasks/TaskCard';
-import '../styles/TasksPage.css';
+import { useTasks } from '@/hooks/useTask';
+import TaskCard from '../components/tasks/TaskCard';
+import './styles/TasksPage.css';
 
 type FilterStatus = 'all' | 'pending' | 'in_progress' | 'review' | 'completed';
 type FilterPriority = 'all' | 'low' | 'medium' | 'high' | 'critical';
 
 const TasksPage: FC = () => {
-  const { myTasks, isLoading, error, fetchMyTasks, updateStatus, deleteTask } = useTask();
+  const { myTasks, isLoading, error, fetchMyTasks, updateStatus, deleteTask } = useTasks();
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('all');
   const [priorityFilter, setPriorityFilter] = useState<FilterPriority>('all');
   const [searchTerm, setSearchTerm] = useState('');

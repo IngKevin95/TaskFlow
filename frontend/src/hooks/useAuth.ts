@@ -46,17 +46,25 @@ export const useAuth = () => {
     setError(null);
     try {
       const response = await authAPI.login(credentials);
-      setToken(response.access_token);
-      localStorage.setItem(STORAGE_KEYS.TOKEN, response.access_token);
+      const accessToken = response.access_token;
+      
+      // Guardar token primero
+      setToken(accessToken);
+      localStorage.setItem(STORAGE_KEYS.TOKEN, accessToken);
       
       // Obtener datos del usuario
       const currentUser = await authAPI.getCurrentUser();
       setUser(currentUser);
       localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
+      
+      // Establecer autenticado al final
       setIsAuthenticated(true);
+      
+      console.log('Login exitoso:', { user: currentUser, token: accessToken });
     } catch (err: any) {
       const errorMessage = err.response?.data?.detail || "Error en el login";
       setError(errorMessage);
+      console.error('Error en login:', err);
       throw err;
     } finally {
       setIsLoading(false);

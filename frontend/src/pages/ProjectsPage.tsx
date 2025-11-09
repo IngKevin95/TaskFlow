@@ -5,14 +5,14 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useProject } from '../../hooks/useProject';
-import ProjectCard from '../projects/ProjectCard';
-import ProjectForm from '../projects/ProjectForm';
-import '../styles/ProjectsPage.css';
+import { useProjects } from '@/hooks/useProject';
+import ProjectCard from '../components/projects/ProjectCard';
+import ProjectForm from '../components/projects/ProjectForm';
+import './styles/ProjectsPage.css';
 
 const ProjectsPage: FC = () => {
   const navigate = useNavigate();
-  const { projects, isLoading, error, fetchProjects, createProject, deleteProject } = useProject();
+  const { projects, isLoading, error, fetchProjects, createProject, deleteProject } = useProjects();
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -21,12 +21,12 @@ const ProjectsPage: FC = () => {
   }, []);
 
   const filteredProjects = projects.filter(project =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchTerm.toLowerCase())
+    project.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (project.descripcion && project.descripcion.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const handleCreateProject = async (name: string, description: string) => {
-    await createProject({ name, description });
+  const handleCreateProject = async (nombre: string, descripcion: string) => {
+    await createProject({ nombre, descripcion });
     setShowForm(false);
   };
 

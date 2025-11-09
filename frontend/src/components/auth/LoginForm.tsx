@@ -5,7 +5,7 @@
 
 import React, { FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import '../styles/Form.css';
 
 interface LoginFormProps {
@@ -68,18 +68,18 @@ const LoginForm: FC<LoginFormProps> = ({ onSuccess }) => {
     }
     
     try {
-      await login(formData.username, formData.password);
+      console.log('Iniciando login...');
+      await login(formData);
+      
+      console.log('Login completado, preparando navegación...');
       
       // Limpiar formulario
       setFormData({ username: '', password: '' });
       
-      // Callback de éxito
-      if (onSuccess) {
-        onSuccess();
-      } else {
-        // Redirigir a dashboard si no hay callback
-        navigate('/projects');
-      }
+      // Navegar inmediatamente después del login exitoso
+      console.log('Navegando a /projects');
+      navigate('/projects', { replace: true });
+      
     } catch (err) {
       // El error se maneja en el hook useAuth y se mostrará en la UI
       console.error('Error al iniciar sesión:', err);

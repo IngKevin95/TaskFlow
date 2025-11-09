@@ -5,9 +5,9 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useProject } from '../../hooks/useProject';
-import { useTask } from '../../hooks/useTask';
-import '../styles/ProjectDetail.css';
+import { useProject } from '@/hooks/useProject';
+import { useTasks } from '@/hooks/useTask';
+import './styles/ProjectDetail.css';
 
 const ProjectDetailPage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,7 +23,7 @@ const ProjectDetailPage: FC = () => {
     createTask, 
     deleteTask, 
     updateStatus 
-  } = useTask();
+  } = useTasks();
 
   const [activeTab, setActiveTab] = useState<'tasks' | 'members'>('tasks');
   const project = projects.find(p => p.id === projectId);
