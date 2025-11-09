@@ -1,0 +1,235 @@
+/* Estilos para notificaciones de validación de token */
+.token-validation-notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    padding: 20px 25px;
+    border-radius: 8px;
+    z-index: 99999;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 1.6;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: slideInRight 0.3s ease-out;
+    max-width: 400px;
+    min-width: 300px;
+}
+
+.token-validation-notification.token-success {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border-left: 5px solid #2E7D32;
+}
+
+.token-validation-notification.token-error {
+    background: linear-gradient(135deg, #f44336 0%, #e53935 100%);
+    color: white;
+    border-left: 5px solid #c62828;
+}
+
+.token-validation-notification.token-info {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    color: white;
+    border-left: 5px solid #0D47A1;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(450px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Estilos para el botón Authorize según validación del token */
+.btn.authorize.unlocked.token-valid {
+    background-color: #4CAF50 !important;
+    border-color: #4CAF50 !important;
+    animation: pulseGreen 2s infinite;
+}
+
+.btn.authorize.unlocked.token-invalid {
+    background-color: #f44336 !important;
+    border-color: #f44336 !important;
+    animation: pulseRed 2s infinite;
+}
+
+.btn.authorize.unlocked.token-valid svg {
+    fill: white !important;
+}
+
+.btn.authorize.unlocked.token-invalid svg {
+    fill: white !important;
+}
+
+@keyframes pulseGreen {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+    }
+}
+
+@keyframes pulseRed {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+    }
+}
+
+/* Ocultar el valor "string" por defecto en los inputs del login */
+.swagger-ui input[placeholder="username"],
+.swagger-ui input[placeholder="password"] {
+    color: #3b4151;
+}
+
+.swagger-ui input[placeholder="username"][value="string"],
+.swagger-ui input[placeholder="password"][value="string"] {
+    color: transparent;
+}
+
+.swagger-ui input[placeholder="username"]:focus,
+.swagger-ui input[placeholder="password"]:focus {
+    color: #3b4151 !important;
+}
+
+/* Convertir el campo password a tipo password visualmente */
+.swagger-ui input[placeholder="password"] {
+    -webkit-text-security: disc;
+    text-security: disc;
+}
+
+/* Banner informativo */
+.auth-info-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 18px 25px;
+    text-align: center;
+    font-size: 13px;
+    margin-bottom: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.auth-info-banner strong {
+    font-size: 17px;
+    display: block;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.auth-status {
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.10);
+    min-height: 36px;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status-indicator strong,
+.status-indicator .username {
+    font-weight: 700;
+    font-size: 13px;
+    display: inline;
+    white-space: nowrap;
+}
+
+.status-logged-out {
+    background-color: rgba(244, 67, 54, 0.25);
+    border: 2px solid rgba(244, 67, 54, 0.5);
+}
+
+.status-logged-in {
+    background-color: rgba(76, 175, 80, 0.25);
+    border: 2px solid rgba(76, 175, 80, 0.6);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(76, 175, 80, 0);
+    }
+}
+
+.steps-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.auth-info-banner .step {
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    line-height: 1.4;
+    display: inline-block;
+    white-space: nowrap;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.auth-info-banner .step:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.auth-info-banner .step-highlight {
+    background-color: rgba(255, 255, 255, 0.28);
+    padding: 7px 14px;
+    border-radius: 15px;
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: bold;
+    display: inline-block;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.auth-info-banner .credentials {
+    font-size: 12px;
+    opacity: 0.92;
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+.auth-info-banner code {
+    background-color: rgba(0, 0, 0, 0.25);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: bold;
+}

@@ -1,47 +1,39 @@
 """
 Dependencies for API endpoints
 """
-from fastapi import HTTPException, status, Header, Depends
+from fastapi import HTTPException, status, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
 from app.services.auth_service import AuthService
 
+# Security scheme for Swagger UI
+security = HTTPBearer(
+    scheme_name="BearerAuth",
+    description="Ingresa tu token JWT (sin el prefijo 'Bearer')",
+    auto_error=True
+)
+
 
 async def get_current_user(
-    authorization: str = Header(None),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ):
     """
-    Get current authenticated user from Authorization header
+    Get current authenticated user from Bearer token
     
     Args:
-        authorization: Authorization header value
+        credentials: HTTP Bearer credentials from Authorization header
         db: Database session
         
     Returns:
         Current user
         
     Raises:
-        HTTPException: If not authenticated
+        HTTPException: If not authenticated or token is invalid
     """
-    if not authorization:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing authorization header",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    # Extract token from "Bearer <token>"
-    parts = authorization.split(" ")
-    if len(parts) != 2 or parts[0].lower() != "bearer":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authorization header format",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    token = parts[1]
+    token = credentials.credentials
     
     try:
         from app.core.security import decode_token
@@ -51,18 +43,28 @@ async def get_current_user(
         if not user_id:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token",
+                detail="Token inválido: no contiene ID de usuario",
                 headers={"WWW-Authenticate": "Bearer"},
             )
         
         # Get user from database
         service = AuthService(db)
         user = service.get_current_user(int(user_id))
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Usuario no encontrado",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
         return user
         
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
+            detail=f"Token inválido o expirado: {str(e)}",
             headers={"WWW-Authenticate": "Bearer"},
         )

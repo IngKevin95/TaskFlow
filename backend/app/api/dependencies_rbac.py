@@ -1,7 +1,8 @@
 """
 RBAC dependencies for authentication and authorization
 """
-from fastapi import HTTPException, status, Depends, Header
+from fastapi import HTTPException, status, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from jose import JWTError
 
@@ -9,41 +10,32 @@ from app.database.session import get_db
 from app.core.security import decode_token
 from app.services.auth_service import AuthService
 
+# Security scheme for Swagger UI (compatible con el botón Authorize)
+security = HTTPBearer(
+    scheme_name="BearerAuth",
+    description="Token JWT - usa el botón 'Authorize' para autenticarte",
+    auto_error=True
+)
+
 
 async def get_current_user_from_header(
-    authorization: str = Header(None),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ):
     """
-    Get current user from Authorization header
+    Get current user from Bearer token (compatible con Swagger Authorize button)
     
     Args:
-        authorization: Authorization header value
+        credentials: HTTP Bearer credentials from Authorization header
         db: Database session
         
     Returns:
         Current user
         
     Raises:
-        HTTPException: If token is missing or invalid
+        HTTPException: If token is invalid or expired
     """
-    if not authorization:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing authorization header",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    # Extract token from "Bearer <token>"
-    parts = authorization.split(" ")
-    if len(parts) != 2 or parts[0].lower() != "bearer":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authorization header format",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    token = parts[1]
+    token = credentials.credentials
     
     try:
         payload = decode_token(token)
@@ -52,19 +44,29 @@ async def get_current_user_from_header(
         if not user_id:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token",
+                detail="Token inválido: no contiene ID de usuario",
                 headers={"WWW-Authenticate": "Bearer"},
             )
         
         # Get user from database
         service = AuthService(db)
         user = service.get_current_user(int(user_id))
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Usuario no encontrado",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
         return user
         
-    except JWTError:
+    except HTTPException:
+        raise
+    except JWTError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
+            detail=f"Token inválido o expirado: {str(e)}",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
