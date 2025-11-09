@@ -79,7 +79,7 @@ class UserManagementService:
             is_active=True
         )
 
-        user_created = self.user_repo.create(user)
+        user_created = self.user_repo.create_from_obj(user)
         return UserRead.from_orm(user_created)
 
     def get_user(self, user_id: int) -> UserRead:
@@ -166,7 +166,7 @@ class UserManagementService:
                 raise ValueError(f"Rol inválido. Roles válidos: {', '.join(valid_roles)}")
 
         # Actualizar solo los campos permitidos
-        user_updated = self.user_repo.update(user_id, update_data)
+        user_updated = self.user_repo.update(user_id, **update_data)
         return UserRead.from_orm(user_updated)
 
     def delete_user(self, user_id: int) -> bool:
@@ -187,7 +187,7 @@ class UserManagementService:
             raise UserNotFoundError(f"Usuario con ID {user_id} no encontrado")
 
         # No eliminar el usuario, solo marcarlo como inactivo
-        self.user_repo.update(user_id, {"is_active": False})
+        self.user_repo.update(user_id, is_active=False)
         return True
 
     def activate_user(self, user_id: int) -> bool:
@@ -207,7 +207,7 @@ class UserManagementService:
         if not user:
             raise UserNotFoundError(f"Usuario con ID {user_id} no encontrado")
 
-        self.user_repo.update(user_id, {"is_active": True})
+        self.user_repo.update(user_id, is_active=True)
         return True
 
     def change_password(self, user_id: int, new_password: str) -> bool:
@@ -228,5 +228,5 @@ class UserManagementService:
         if not user:
             raise UserNotFoundError(f"Usuario con ID {user_id} no encontrado")
 
-        self.user_repo.update(user_id, {"hashed_password": hash_password(new_password)})
+        self.user_repo.update(user_id, hashed_password=hash_password(new_password))
         return True

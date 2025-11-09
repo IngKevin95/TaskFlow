@@ -84,7 +84,7 @@ async def create_project(
     response_model=List[ProjectRead],
     status_code=status.HTTP_200_OK,
     summary="Listar proyectos del usuario",
-    description="Obtiene todos los proyectos donde el usuario es propietario o miembro.",
+    description="Obtiene todos los proyectos donde el usuario es propietario o miembro. Admins ven todos.",
 )
 async def list_projects(
     skip: int = Query(0, ge=0, description="Número de registros a saltar"),
@@ -98,12 +98,17 @@ async def list_projects(
     - **skip**: Offset para paginación (default: 0)
     - **limit**: Número máximo de resultados (default: 10, máximo: 100)
     
-    Retorna proyectos donde el usuario es propietario o miembro.
+    Comportamiento según rol:
+    - **admin**: Ve todos los proyectos
+    - **read_write, read_only**: Ven solo proyectos donde son propietarios o miembros
     """
     try:
         service = ProjectService(db)
         projects = service.get_user_projects(
-            user_id=current_user.id, skip=skip, limit=limit
+            user_id=current_user.id, 
+            user_role=current_user.role,
+            skip=skip, 
+            limit=limit
         )
         return projects
     except Exception as e:
@@ -284,7 +289,7 @@ async def delete_project(
     response_model=MessageResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Agregar miembro al proyecto",
-    description="Agrega un usuario como miembro del proyecto. Solo el propietario puede agregar.",
+    description="Agrega un usuario como miembro del proyecto. Solo el propietario o admin pueden agregar.",
 )
 async def add_member(
     project_id: int,
@@ -298,7 +303,7 @@ async def add_member(
     - **project_id**: ID del proyecto
     - **member_id**: ID del usuario a agregar
     
-    Solo el propietario puede agregar miembros.
+    Solo el propietario o administrador pueden agregar miembros.
     """
     # Validar que el usuario no sea READ_ONLY
     if current_user.role == "read_only":
@@ -310,16 +315,18 @@ async def add_member(
     try:
         service = ProjectService(db)
         
-        # Verificar que el usuario es propietario
-        if not service.is_owner(project_id=project_id, user_id=current_user.id):
-            raise PermissionDeniedError(
-                "Solo el propietario puede agregar miembros"
-            )
+        # Verificar que el proyecto existe
+        project = service.get_project(project_id=project_id)
+        if not project:
+            raise ProjectNotFoundError(f"Proyecto con ID {project_id} no encontrado")
         
-        # Verificar que el miembro no es el mismo propietario
-        if member_id == current_user.id:
-            raise InvalidInputError(
-                "El propietario ya es miembro del proyecto"
+        # Verificar que el usuario es propietario O admin
+        is_admin = current_user.role == "admin"
+        is_owner = service.is_owner(project_id=project_id, user_id=current_user.id)
+        
+        if not (is_admin or is_owner):
+            raise PermissionDeniedError(
+                "Solo el propietario o un administrador puede agregar miembros"
             )
         
         # Verificar que el miembro no está ya en el proyecto
@@ -351,9 +358,9 @@ async def add_member(
 @router.delete(
     "/{project_id}/members/{member_id}",
     response_model=MessageResponse,
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_201_CREATED,
     summary="Remover miembro del proyecto",
-    description="Remueve un usuario del proyecto. Solo el propietario puede remover.",
+    description="Remueve un usuario del proyecto. Solo el propietario o admin pueden remover.",
 )
 async def remove_member(
     project_id: int,
@@ -367,7 +374,7 @@ async def remove_member(
     - **project_id**: ID del proyecto
     - **member_id**: ID del usuario a remover
     
-    Solo el propietario puede remover miembros.
+    Solo el propietario o administrador pueden remover miembros.
     """
     # Validar que el usuario no sea READ_ONLY
     if current_user.role == "read_only":
@@ -379,15 +386,22 @@ async def remove_member(
     try:
         service = ProjectService(db)
         
-        # Verificar que el usuario es propietario
-        if not service.is_owner(project_id=project_id, user_id=current_user.id):
+        # Verificar que el proyecto existe
+        project = service.get_project(project_id=project_id)
+        if not project:
+            raise ProjectNotFoundError(f"Proyecto con ID {project_id} no encontrado")
+        
+        # Verificar que el usuario es propietario O admin
+        is_admin = current_user.role == "admin"
+        is_owner = service.is_owner(project_id=project_id, user_id=current_user.id)
+        
+        if not (is_admin or is_owner):
             raise PermissionDeniedError(
-                "Solo el propietario puede remover miembros"
+                "Solo el propietario o un administrador puede remover miembros"
             )
         
         # Verificar que no intenta remover al propietario
-        project = service.get_project(project_id=project_id)
-        if project and project.owner_id == member_id:
+        if project.owner_id == member_id:
             raise InvalidInputError(
                 "No puedes remover al propietario del proyecto"
             )

@@ -7,11 +7,11 @@
 # 
 # VARIABLES A REEMPLAZAR:
 # {{token}}             - Token JWT del usuario admin
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJhZG1pbiIsImV4cCI6MTc2MjY3MTMwMH0.0duz1B4GniG68bNVVFV3Np_1H6Ce_2zPFA_efJmsZCo
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc2MjczMDI1N30.0HWIKSgPDbQH9OZ_FShdTdYIfQK0yDRo-iY9ZY1zQuM
 # {{token_read_write}}  - Token JWT de usuario con rol read_write
-@token_read_write=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwidXNlcm5hbWUiOiJtaWtlLmRldmVsb3BlciIsImV4cCI6MTc2MjY3MTgxMn0.Ec-Djzs_3SP9d045Ti--PqRUgSODmstfc7aWlaYtROU
+@token_read_write=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwidXNlcm5hbWUiOiJhbGVqby5kZXZlbG9wZXIiLCJyb2xlIjoicmVhZF9vbmx5IiwiZXhwIjoxNzYyNzMxMDkwfQ.zhoNcmSfbjXKdfe0bQW6DSWcw_TrqAra3Tmr0r5iD_U
 # {{token_read_only}}   - Token JWT de usuario con rol read_only
-@token_read_only=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwidXNlcm5hbWUiOiJsYXVyYS52aWV3ZXIiLCJleHAiOjE3NjI2NzE4NDh9.JYPytQFHAx9MR0Uandofc0tVD5jaq1Yge4cxvU42MgM
+@token_read_only=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwidXNlcm5hbWUiOiJsYXVyYS52aWV3ZXIiLCJyb2xlIjoicmVhZF9vbmx5IiwiZXhwIjoxNzYyNzMxMTE5fQ.VYN1VlymPPicoFrJq866YrtfLLXyrua7W37uvUjNXfU
 
 @token_expired=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0IiwidXNlcm5hbWUiOiJtYXJpYS52aWV3ZXIiLCJleHAiOjE3NjI1NzcyMjN9.jPoOiApm5AbJjkghagM7FHVXC2VRh9j9ge3MmM4UN78
 
@@ -32,7 +32,7 @@ username=admin&password=AdminTaskFlow@2025!
 POST http://localhost:8000/api/auth/login
 Content-Type: application/x-www-form-urlencoded
 
-username=mike.developer&password=123456789
+username=alejo.developer&password=123456789
 
 ### 1.3 Login - Obtener Token READ_ONLY
 POST http://localhost:8000/api/auth/login
@@ -67,11 +67,11 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "username": "mike.developer",
-  "email": "mike.suarez@example.com",
+  "username": "alejo.developer",
+  "email": "alejo.perez@example.com",
   "password": "123456789",
   "role": "read_only",
-  "first_name": "Mike",
+  "first_name": "Alejo",
   "last_name": "Developer"
 }
 
@@ -170,7 +170,7 @@ GET http://localhost:8000/api/users/?skip=0&limit=10
 Authorization: Bearer {{token_read_only}}
 
 ### 2.11 Obtener Usuario por ID
-GET http://localhost:8000/api/users/4
+GET http://localhost:8000/api/users/2
 Authorization: Bearer {{token}}
 
 ### 2.12 Obtener Usuario por ID - No existe (Error 404)
@@ -205,7 +205,7 @@ Authorization: Bearer {{token_read_write}}
 
 ### 2.17 Cambiar Contraseña de Usuario - Como ADMIN
 POST http://localhost:8000/api/users/2/change-password
-Authorization: Bearer {{token}}
+Authorization: Bearer {{token_read_write}}
 Content-Type: application/json
 
 {
@@ -230,8 +230,8 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "name": "App Mobile - Desarrollo",
-  "description": "Desarrollo de aplicación mobile para iOS y Android"
+  "nombre": "App Mobile - Desarrollo",
+  "descripcion": "Desarrollo de aplicación mobile para iOS y Android"
 }
 
 ### 3.2 Crear Proyecto - Como READ_WRITE
@@ -240,8 +240,8 @@ Authorization: Bearer {{token_read_write}}
 Content-Type: application/json
 
 {
-  "name": "Web Platform - Frontend",
-  "description": "Desarrollo de plataforma web con React"
+  "nombre": "Web Platform - Frontend",
+  "descripcion": "Desarrollo de plataforma web con React"
 }
 
 ### 3.3 Crear Proyecto - READ_ONLY intenta (Error 403)
@@ -250,8 +250,8 @@ Authorization: Bearer {{token_read_only}}
 Content-Type: application/json
 
 {
-  "name": "Backend API",
-  "description": "API backend para plataforma"
+  "nombre": "Backend API",
+  "descripcion": "API backend para plataforma"
 }
 
 ### 3.4 Listar Proyectos - Como ADMIN
@@ -267,7 +267,7 @@ GET http://localhost:8000/api/projects?skip=0&limit=10
 Authorization: Bearer {{token_read_only}}
 
 ### 3.7 Obtener Proyecto por ID
-GET http://localhost:8000/api/projects/1
+GET http://localhost:8000/api/projects/2
 Authorization: Bearer {{token}}
 
 ### 3.8 Obtener Proyecto por ID - No existe (Error 404)
@@ -280,17 +280,17 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "name": "App Mobile - En Producción",
-  "description": "Aplicación mobile en producción - soporte y mantenimiento"
+  "nombre": "App Mobile - En Producción",
+  "descripcion": "Aplicación mobile en producción - soporte y mantenimiento"
 }
 
 ### 3.10 Actualizar Proyecto - READ_WRITE intenta (Error 403)
-PATCH http://localhost:8000/api/projects/1
+PATCH http://localhost:8000/api/projects/2
 Authorization: Bearer {{token_read_write}}
 Content-Type: application/json
 
 {
-  "name": "Modified Name"
+  "nombre": "Frontend Modificado - Web Platform"
 }
 
 ### 3.11 Eliminar Proyecto - Como dueño
@@ -298,19 +298,19 @@ DELETE http://localhost:8000/api/projects/1
 Authorization: Bearer {{token}}
 
 ### 3.12 Agregar Miembro al Proyecto - Como propietario
-POST http://localhost:8000/api/projects/1/members?member_id=2
+POST http://localhost:8000/api/projects/2/members?member_id=3
 Authorization: Bearer {{token}}
 
 ### 3.13 Agregar Miembro - READ_ONLY intenta (Error 403)
-POST http://localhost:8000/api/projects/1/members?member_id=3
+POST http://localhost:8000/api/projects/2/members?member_id=3
 Authorization: Bearer {{token_read_only}}
 
 ### 3.14 Agregar Miembro - Usuario no propietario intenta (Error 403)
-POST http://localhost:8000/api/projects/1/members?member_id=3
+POST http://localhost:8000/api/projects/2/members?member_id=3
 Authorization: Bearer {{token_read_write}}
 
 ### 3.15 Remover Miembro del Proyecto - Como propietario
-DELETE http://localhost:8000/api/projects/1/members/2
+DELETE http://localhost:8000/api/projects/2/members/3
 Authorization: Bearer {{token}}
 
 ### 3.16 Remover Miembro - READ_ONLY intenta (Error 403)
@@ -318,7 +318,7 @@ DELETE http://localhost:8000/api/projects/1/members/2
 Authorization: Bearer {{token_read_only}}
 
 ### 3.17 Remover Miembro - Usuario no propietario intenta (Error 403)
-DELETE http://localhost:8000/api/projects/1/members/2
+DELETE http://localhost:8000/api/projects/2/members/3
 Authorization: Bearer {{token_read_write}}
 
 ### ==========================================
@@ -335,7 +335,7 @@ Content-Type: application/json
   "description": "Implementar JWT authentication con roles",
   "priority": "high",
   "status": "in_progress",
-  "project_id": 1,
+  "project_id": 2,
   "assigned_to": 2
 }
 
@@ -364,19 +364,19 @@ Content-Type: application/json
 }
 
 ### 4.4 Listar Tareas del Proyecto
-GET http://localhost:8000/api/tasks/project/1
+GET http://localhost:8000/api/tasks/project/2
 Authorization: Bearer {{token}}
 
 ### 4.4a Listar Tareas - Filtrado por Estado
-GET http://localhost:8000/api/tasks/project/1?status_filter=completed
+GET http://localhost:8000/api/tasks/project/2?status_filter=completed
 Authorization: Bearer {{token}}
 
 ### 4.4b Listar Tareas - Filtrado por Prioridad
-GET http://localhost:8000/api/tasks/project/1?priority_filter=high
+GET http://localhost:8000/api/tasks/project/2?priority_filter=high
 Authorization: Bearer {{token}}
 
 ### 4.4c Listar Tareas - Filtrado por Usuario Asignado
-GET http://localhost:8000/api/tasks/project/1?assigned_to_id=2
+GET http://localhost:8000/api/tasks/project/2?assigned_to_id=2
 Authorization: Bearer {{token}}
 
 ### 4.4d Listar Tareas - Filtrado por Creador
@@ -384,7 +384,27 @@ GET http://localhost:8000/api/tasks/project/2?creator_id=1
 Authorization: Bearer {{token}}
 
 ### 4.4e Listar Tareas - Combinación de Filtros
-GET http://localhost:8000/api/tasks/project/2?priority_filter=high&status_filter=pending&assigned_to_id=2
+GET http://localhost:8000/api/tasks/project/2?priority_filter=medium&status_filter=pending&assigned_to_id=2
+Authorization: Bearer {{token}}
+
+### 4.4f Listar Tareas Asignadas a un Usuario - Sin filtros
+GET http://localhost:8000/api/tasks/user/1
+Authorization: Bearer {{token}}
+
+### 4.4g Listar Tareas Asignadas a un Usuario - Filtrado por Estado
+GET http://localhost:8000/api/tasks/user/2?status_filter=pending
+Authorization: Bearer {{token}}
+
+### 4.4h Listar Tareas Asignadas a un Usuario - Filtrado por Prioridad
+GET http://localhost:8000/api/tasks/user/1?priority_filter=high
+Authorization: Bearer {{token}}
+
+### 4.4i Listar Tareas Asignadas a un Usuario - Filtrado por Proyecto
+GET http://localhost:8000/api/tasks/user/2?project_id=2
+Authorization: Bearer {{token}}
+
+### 4.4j Listar Tareas Asignadas a un Usuario - Combinación de Filtros
+GET http://localhost:8000/api/tasks/user/2?status_filter=in_progress&priority_filter=high&project_id=2
 Authorization: Bearer {{token}}
 
 ### 4.5 Actualizar Tarea - Como ADMIN
@@ -398,9 +418,9 @@ Content-Type: application/json
   "assigned_to_id": 2
 }
 
-### 4.6 Actualizar Tarea - READ_WRITE intenta (Error 403)
+### 4.6 Actualizar Tarea - READ_WRITE fucniona READ_ONLY intenta (Error 403)
 PATCH http://localhost:8000/api/tasks/1
-Authorization: Bearer {{token_read_only}}
+Authorization: Bearer {{token_read_write}}
 Content-Type: application/json
 
 {
@@ -413,7 +433,7 @@ Authorization: Bearer {{token}}
 
 ### 4.8 Eliminar Tarea - READ_WRITE intenta (Error 403)
 DELETE http://localhost:8000/api/tasks/2
-Authorization: Bearer {{token_read_write}}
+Authorization: Bearer {{token_read_only}}
 
 ### ==========================================
 ### 5. PRUEBAS DE SEGURIDAD Y ERRORES
@@ -482,8 +502,8 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "name": "Testing Project",
-  "description": "Proyecto para testing del sistema"
+  "nombre": "Testing Project",
+  "descripcion": "Proyecto para testing del sistema"
 }
 
 ### Paso 2: Crear primera tarea

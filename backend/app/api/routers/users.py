@@ -320,21 +320,26 @@ async def change_password(
     current_user = Depends(get_current_user_from_header)
 ):
     """
-    Cambiar contraseña de un usuario (solo ADMIN)
+    Cambiar contraseña de un usuario
+    
+    Reglas:
+    - Un usuario puede cambiar su propia contraseña
+    - ADMIN puede cambiar la contraseña de cualquier usuario
     
     Args:
         user_id: ID del usuario
         request: Objeto con la nueva contraseña
         db: Sesión de base de datos
-        current_user: Usuario actual (debe ser ADMIN)
+        current_user: Usuario actual
         
     Returns:
         Mensaje de confirmación
     """
-    if current_user.role != UserRole.ADMIN.value:
+    # Permitir si es ADMIN o si está cambiando su propia contraseña
+    if current_user.role != UserRole.ADMIN.value and current_user.id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only ADMIN users can change passwords"
+            detail="You can only change your own password or be an ADMIN to change others"
         )
     
     try:

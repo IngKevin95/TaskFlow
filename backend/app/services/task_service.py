@@ -38,7 +38,7 @@ class TaskService:
         self.user_repo = UserRepository(db)
 
     def create_task(self, project_id: int, task_data: TaskCreate, 
-                   creator_id: int) -> TaskRead:
+                   creator_id: int, creator_role: str = None) -> TaskRead:
         """
         Crear nueva tarea en un proyecto
         
@@ -46,20 +46,24 @@ class TaskService:
             project_id: ID del proyecto
             task_data: Datos de la tarea
             creator_id: ID del usuario creador
+            creator_role: Rol del usuario creador (admin, read_write, read_only)
             
         Returns:
             Tarea creada
             
         Raises:
             ProjectNotFoundError: Si el proyecto no existe
-            PermissionDeniedError: Si no es miembro del proyecto
+            PermissionDeniedError: Si no es miembro del proyecto ni admin
         """
-        # Verificar que el proyecto existe y es miembro
+        # Verificar que el proyecto existe y es miembro (o es admin)
         project = self.project_repo.get(project_id)
         if not project:
             raise ProjectNotFoundError(f"Proyecto {project_id} no encontrado")
 
-        if not self.project_repo.is_member(project_id, creator_id):
+        is_admin = creator_role == "admin"
+        is_member = self.project_repo.is_member(project_id, creator_id)
+        
+        if not (is_admin or is_member):
             raise PermissionDeniedError("No eres miembro de este proyecto")
 
         # Verificar que el usuario asignado existe (si se especifica)

@@ -11,7 +11,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
     networks:
       - taskflow_network
     healthcheck:
@@ -47,9 +47,6 @@ services:
     networks:
       - taskflow_network
     restart: unless-stopped
-
-volumes:
-  postgres_data:
 
 networks:
   taskflow_network:

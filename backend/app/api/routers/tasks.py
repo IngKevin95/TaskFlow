@@ -70,10 +70,13 @@ async def create_task(
     try:
         project_service = ProjectService(db)
         
-        # Verificar que el usuario es miembro del proyecto
-        if not project_service.is_member(
+        # Verificar que el usuario es miembro del proyecto (o es admin)
+        is_admin = current_user.role == "admin"
+        is_member = project_service.is_member(
             project_id=task_data.project_id, user_id=current_user.id
-        ):
+        )
+        
+        if not (is_admin or is_member):
             raise PermissionDeniedError(
                 "No tienes permisos para crear tareas en este proyecto"
             )
@@ -92,6 +95,7 @@ async def create_task(
             project_id=task_data.project_id,
             task_data=task_data,
             creator_id=current_user.id,
+            creator_role=current_user.role,
         )
         return task
     except PermissionDeniedError as e:
@@ -149,10 +153,13 @@ async def get_project_tasks(
     try:
         project_service = ProjectService(db)
         
-        # Verificar que el usuario es miembro del proyecto
-        if not project_service.is_member(
+        # Verificar que el usuario es miembro del proyecto (o es admin)
+        is_admin = current_user.role == "admin"
+        is_member = project_service.is_member(
             project_id=project_id, user_id=current_user.id
-        ):
+        )
+        
+        if not (is_admin or is_member):
             raise PermissionDeniedError(
                 "No tienes permisos para acceder a las tareas de este proyecto"
             )
@@ -227,6 +234,69 @@ async def get_my_tasks(
         )
 
 
+# READ - GET /api/tasks/user/{user_id}
+@router.get(
+    "/user/{user_id}",
+    response_model=List[TaskReadWithAssignee],
+    status_code=status.HTTP_200_OK,
+    summary="Obtener tareas asignadas a un usuario",
+    description="Obtiene todas las tareas asignadas a un usuario específico, sin importar el proyecto.",
+)
+async def get_user_assigned_tasks(
+    user_id: int,
+    status_filter: Optional[str] = Query(
+        None, description="Filtrar por estado (pending/in_progress/review/completed)"
+    ),
+    priority_filter: Optional[str] = Query(
+        None, description="Filtrar por prioridad (low/medium/high/critical)"
+    ),
+    project_id: Optional[int] = Query(
+        None, description="Filtrar por proyecto (ID del proyecto)"
+    ),
+    skip: int = Query(0, ge=0, description="Número de registros a saltar"),
+    limit: int = Query(50, ge=1, le=200, description="Número de registros a retornar"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Obtiene todas las tareas asignadas a un usuario específico con filtros opcionales.
+    
+    - **user_id**: ID del usuario
+    - **status_filter**: Filtrar por estado - opcional
+    - **priority_filter**: Filtrar por prioridad - opcional
+    - **project_id**: Filtrar por proyecto - opcional
+    - **skip**: Offset para paginación (default: 0)
+    - **limit**: Número máximo de resultados (default: 50)
+    
+    Solo admin puede ver tareas de otros usuarios. Los demás solo ven sus propias tareas.
+    """
+    # Validar permisos: solo admin puede ver tareas de otros usuarios
+    is_admin = current_user.role == "admin"
+    is_same_user = current_user.id == user_id
+    
+    if not (is_admin or is_same_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permisos para ver tareas de otros usuarios"
+        )
+    
+    try:
+        task_service = TaskService(db)
+        tasks = task_service.get_user_assigned_tasks(
+            user_id=user_id,
+            status_filter=status_filter,
+            priority_filter=priority_filter,
+            project_id=project_id,
+            skip=skip,
+            limit=limit,
+        )
+        return tasks
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
 # READ - GET /api/tasks/{task_id}
 @router.get(
     "/{task_id}",
@@ -254,11 +324,14 @@ async def get_task(
         if not task:
             raise TaskNotFoundError(f"Tarea con ID {task_id} no encontrada")
         
-        # Verificar permisos: usuario debe ser miembro del proyecto
+        # Verificar permisos: usuario debe ser miembro del proyecto (o admin)
         project_service = ProjectService(db)
-        if not project_service.is_member(
+        is_admin = current_user.role == "admin"
+        is_member = project_service.is_member(
             project_id=task.project_id, user_id=current_user.id
-        ):
+        )
+        
+        if not (is_admin or is_member):
             raise PermissionDeniedError(
                 "No tienes permisos para acceder a esta tarea"
             )
@@ -314,11 +387,14 @@ async def update_task(
         if not task:
             raise TaskNotFoundError(f"Tarea con ID {task_id} no encontrada")
         
-        # Verificar que el usuario es miembro del proyecto
+        # Verificar que el usuario es miembro del proyecto (o es admin)
         project_service = ProjectService(db)
-        if not project_service.is_member(
+        is_admin = current_user.role == "admin"
+        is_member = project_service.is_member(
             project_id=task.project_id, user_id=current_user.id
-        ):
+        )
+        
+        if not (is_admin or is_member):
             raise PermissionDeniedError(
                 "No eres miembro del proyecto que contiene esta tarea"
             )
@@ -386,10 +462,13 @@ async def delete_task(
         if not task:
             raise TaskNotFoundError(f"Tarea con ID {task_id} no encontrada")
         
-        # Verificar permisos: solo creador puede eliminar
-        if task.creator_id != current_user.id:
+        # Verificar permisos: solo creador o admin puede eliminar
+        is_admin = current_user.role == "admin"
+        is_creator = task.creator_id == current_user.id
+        
+        if not (is_admin or is_creator):
             raise PermissionDeniedError(
-                "Solo el creador (propietario) de la tarea puede eliminarla"
+                "Solo el creador o un administrador puede eliminar la tarea"
             )
         
         success = task_service.delete_task(task_id=task_id)
@@ -446,11 +525,14 @@ async def update_task_status(
         if not task:
             raise TaskNotFoundError(f"Tarea con ID {task_id} no encontrada")
         
-        # Verificar permisos: usuario debe ser miembro del proyecto
+        # Verificar permisos: usuario debe ser miembro del proyecto (o admin)
         project_service = ProjectService(db)
-        if not project_service.is_member(
+        is_admin = current_user.role == "admin"
+        is_member = project_service.is_member(
             project_id=task.project_id, user_id=current_user.id
-        ):
+        )
+        
+        if not (is_admin or is_member):
             raise PermissionDeniedError(
                 "No tienes permisos para actualizar esta tarea"
             )

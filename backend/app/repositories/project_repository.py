@@ -14,6 +14,10 @@ class ProjectRepository(BaseRepository):
     def __init__(self, db: Session):
         super().__init__(db, Project)
     
+    def get_all_projects(self, skip: int = 0, limit: int = 100) -> List[Project]:
+        """Get all projects (admin only)"""
+        return self.db.query(Project).offset(skip).limit(limit).all()
+    
     def get_by_owner(self, owner_id: int, skip: int = 0, limit: int = 100) -> List[Project]:
         """Get projects owned by a user"""
         return self.db.query(Project).filter(

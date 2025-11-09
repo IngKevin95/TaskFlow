@@ -7,7 +7,7 @@
 # 
 # VARIABLES A REEMPLAZAR:
 # {{token}}             - Token JWT del usuario admin
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJhZG1pbiIsImV4cCI6MTc2MjY3MTMwMH0.0duz1B4GniG68bNVVFV3Np_1H6Ce_2zPFA_efJmsZCo
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc2MjY3NzkzOX0.I9itNxCvQnBC6dkEFq3Zh6473epUms1YjvlXwnEpxyQ
 # {{token_read_write}}  - Token JWT de usuario con rol read_write
 @token_read_write=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwidXNlcm5hbWUiOiJtaWtlLmRldmVsb3BlciIsImV4cCI6MTc2MjY3MTgxMn0.Ec-Djzs_3SP9d045Ti--PqRUgSODmstfc7aWlaYtROU
 # {{token_read_only}}   - Token JWT de usuario con rol read_only

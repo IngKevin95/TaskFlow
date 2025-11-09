@@ -80,12 +80,13 @@ class ProjectService:
 
         return ProjectReadWithDetails.from_orm(project)
 
-    def get_user_projects(self, user_id: int, skip: int = 0, limit: int = 10) -> List[ProjectRead]:
+    def get_user_projects(self, user_id: int, user_role: str, skip: int = 0, limit: int = 10) -> List[ProjectRead]:
         """
         Obtener proyectos del usuario
         
         Args:
             user_id: ID del usuario
+            user_role: Rol del usuario (admin, read_write, read_only)
             skip: Registros a saltar
             limit: Límite de registros
             
@@ -97,7 +98,13 @@ class ProjectService:
         if not user:
             raise UserNotFoundError(f"Usuario {user_id} no encontrado")
 
-        projects = self.project_repo.get_user_projects(user_id, skip, limit)
+        # Admin ve todos los proyectos
+        if user_role == "admin":
+            projects = self.project_repo.get_all_projects(skip, limit)
+        else:
+            # Otros roles solo ven los que son propietarios o miembros
+            projects = self.project_repo.get_user_projects(user_id, skip, limit)
+        
         return [ProjectRead.from_orm(project) for project in projects]
 
     def update_project(self, project_id: int, project_update: ProjectUpdate, 
@@ -162,12 +169,7 @@ class ProjectService:
         Raises:
             ProjectNotFoundError: Si el proyecto no existe
             UserNotFoundError: Si el usuario no existe
-            PermissionDeniedError: Si no es propietario
         """
-        # Verificar permisos
-        if not self.project_repo.is_owner(project_id, current_user_id):
-            raise PermissionDeniedError("Solo el propietario puede agregar miembros")
-
         # Verificar que ambos existen
         project = self.project_repo.get(project_id)
         if not project:
@@ -190,14 +192,7 @@ class ProjectService:
             
         Returns:
             True si se removió exitosamente
-            
-        Raises:
-            PermissionDeniedError: Si no es propietario
         """
-        # Verificar permisos
-        if not self.project_repo.is_owner(project_id, current_user_id):
-            raise PermissionDeniedError("Solo el propietario puede remover miembros")
-
         return self.project_repo.remove_member(project_id, user_id)
 
     def is_member(self, project_id: int, user_id: int) -> bool:

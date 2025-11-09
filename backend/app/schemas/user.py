@@ -2,7 +2,7 @@
 Schemas de validación para Usuario usando Pydantic
 """
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, SecretStr
 from datetime import datetime
 from typing import Optional, List
 
@@ -23,6 +23,12 @@ class UserCreate(UserBase):
 class RegisterRequest(UserBase):
     """Schema para registro de usuario"""
     password: str = Field(..., min_length=6, max_length=50)
+
+
+class LoginRequest(BaseModel):
+    """Schema para login - password aparece oculto en Swagger"""
+    username: str = Field(..., min_length=3, max_length=50, description="Username")
+    password: SecretStr = Field(..., min_length=6, max_length=50, description="Password")
 
 
 class UserCreateAdmin(UserBase):
