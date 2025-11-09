@@ -144,7 +144,7 @@ docker logs taskflow_backend
 
 ### Opción 2: Instalación Local
 
-```bash
+```bash 
 # 1. Crear entorno virtual
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate

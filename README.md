@@ -21,16 +21,11 @@
 ## ✨ Características Generales
 
 ### 🎯 Backend (FastAPI)
-- ✅ API RESTful con autenticación JWT y HTTPBearer security
+- ✅ API RESTful con autenticación JWT
 - ✅ Sistema RBAC con 3 niveles de roles (ADMIN, READ_WRITE, READ_ONLY)
 - ✅ Gestión completa de usuarios, proyectos y tareas
 - ✅ Filtrado y búsqueda avanzada de tareas (5+ filtros combinables)
-- ✅ **Swagger UI personalizado con validación automática de tokens JWT**
-- ✅ **Banner informativo con estado de autenticación en tiempo real**
-- ✅ **Notificaciones visuales (success/error/info) para feedback del usuario**
-- ✅ **Endpoint /api/auth/validate-token para validación de tokens**
-- ✅ **Inyección automática de tokens a todos los endpoints**
-- ✅ **Limpieza automática de campos de formulario y enmascaramiento de password**
+- ✅ Swagger UI personalizado con validación automática de tokens
 - ✅ Documentación interactiva en ReDoc
 - ✅ Base de datos PostgreSQL con ORM SQLAlchemy
 
@@ -209,29 +204,6 @@ La documentación completa del frontend está en **`frontend/README.md`** con:
 **ReDoc:** http://localhost:8000/redoc
 - Documentación legible de la API
 - Esquemas y modelos detallados
-
----
-
-## 🎨 Swagger UI Personalizado (NEW!)
-
-El backend incluye un **Swagger UI completamente personalizado** con características únicas:
-
-### ✨ Características Principales
-
-- 🔐 **Validación Automática de Tokens:** Valida JWT automáticamente al hacer clic en "Authorize"
-- 🟢 **Banner de Estado:** Muestra en tiempo real si estás autenticado y con qué usuario/rol
-- 🔔 **Notificaciones Visuales:** Feedback instantáneo (✅ válido, ❌ inválido, 🔄 validando)
-- 🔑 **Inyección Automática:** Token se inyecta a todos los endpoints sin copiar/pegar
-- 🧹 **Limpieza de Formularios:** Remueve valores "string" por defecto en login
-- 🔒 **Enmascaramiento de Password:** Campo password muestra puntos en lugar de texto
-- 📊 **Endpoint de Validación:** `/api/auth/validate-token` para validar tokens
-
-### 🚀 Acceder a Swagger UI
-
-```
-Swagger UI Personalizado: http://localhost:8000/docs
-ReDoc: http://localhost:8000/redoc
-```
 
 ---
 
